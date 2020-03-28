@@ -1,0 +1,12 @@
+#container {
+  display: flex;
+  width: 1000px;
+  margin: 0 auto;
+  border: 10px #333 solid;
+}
+
+video {
+  width: 500px;
+  height: 375px;
+  background-color: #666;
+}
