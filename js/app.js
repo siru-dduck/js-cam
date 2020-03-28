@@ -5,14 +5,28 @@ var stopBtn = document.querySelector("#stop");
 var btnContainer = document.querySelector(".btn-container");
 var mediaRecorder = null;
 var chunks = [];
-var stream;
+var mediaSource;
+var sourceBuffer;
+var buffer;
 
-function handleDataAvailable(e) {
+async function handleDataAvailable(e) {
   console.log("push chunks");
   chunks.push(e.data);
+
   var blob = new Blob(chunks, { type: "video/x-matroska;codecs=avc1" });
   chunks = [];
-  video2.src = URL.createObjectURL(blob);
+
+  buffer = await blob.arrayBuffer();
+  mediaSource = new MediaSource();
+  video2.src = URL.createObjectURL(mediaSource);
+  mediaSource.addEventListener("sourceopen", function() {
+    sourceBuffer = mediaSource.addSourceBuffer();
+    sourceBuffer.addEventListener("updateend", function() {
+      mediaSource.endOfStream();
+      video2.play();
+    });
+    sourceBuffer.appendBuffer(buffer);
+  });
   saveVideo(blob);
 }
 
